@@ -9,7 +9,7 @@ export const Container = styled.div`
   background-color: lightgray;
 `;
 
-export const InnerContainer = styled.div`
+export const FormContainer = styled.form`
   background-color: white;
   border: 1px solid grey;
   border-radius: 3px;
@@ -56,8 +56,10 @@ export const Button = styled.button`
   padding: 10px;
   align-self: flex-end;
   border-radius: 3px;
-
+  width: 120px;
+  display: flex;
+  justify-content: center;
   &:hover {
-    cursor: pointer;
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   }
 `;
