@@ -6,7 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const authContextDefaultValues: AuthContextType = {
-  user: null,
+  user: undefined,
   login: (email: string, password: string) =>
     new Promise<boolean>((resolve, reject) => resolve(false)),
   logout: () => null,
@@ -45,7 +45,6 @@ export const AuthContextProvider = ({
       authService
         .login(email, password)
         .then((res) => {
-          console.log('AQQQQQQQQ', res);
           const token = res.data.access_token;
           localStorage.setItem('token', token);
           const user = jwtDecode<any>(token);

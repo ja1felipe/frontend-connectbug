@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   margin: 50px;
-  border-radius: 10px;
+  border-radius: 0px;
   overflow: hidden;
   height: calc(100vh - 102px);
   background-color: white;
@@ -19,7 +19,7 @@ export const Content = styled.div`
 
 export const PageContainer = styled.div`
   margin: 10px;
-  border-radius: 10px;
+  border-radius: 5px;
   background-color: white;
   width: 100%;
   padding: 5px;

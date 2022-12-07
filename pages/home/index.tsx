@@ -6,10 +6,11 @@ import React from 'react';
 import { Container } from './styles';
 
 const Home: React.FC = () => {
-  const { logout, user, isLogged } = useAuth();
+  const { user, isLogged } = useAuth();
   if (!isLogged) return null;
   return (
     <Container>
+      <h1>Bugs Reportados</h1>
       <div>
         <ul>
           {user &&
@@ -18,7 +19,6 @@ const Home: React.FC = () => {
             ))}
         </ul>
       </div>
-      <button onClick={logout}>oi</button>
     </Container>
   );
 };
