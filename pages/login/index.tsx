@@ -1,5 +1,6 @@
 import { useAuth } from '@/auth/contexts/auth.context';
 import Spinner from '@/components/Spinner';
+import { NextPageWithLayout } from '@/pages/_app';
 import { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useState } from 'react';
 
@@ -12,7 +13,7 @@ import {
   Label,
 } from './styles';
 
-const Login: React.FC = () => {
+const Login: NextPageWithLayout = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -67,5 +68,5 @@ const Login: React.FC = () => {
     </Container>
   );
 };
-
+Login.getLayout = (page) => page;
 export default Login;
