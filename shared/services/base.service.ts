@@ -2,9 +2,16 @@ import axios, { AxiosInstance } from 'axios';
 
 export default class BaseRequestService {
   request(): AxiosInstance {
-    console.log(process.env.BASE_URL);
-    return axios.create({
+    const instance = axios.create({
       baseURL: process.env.BASE_URL!,
     });
+
+    instance.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      config.headers!.Authorization = token ? `Bearer ${token}` : '';
+      return config;
+    });
+
+    return instance;
   }
 }

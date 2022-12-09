@@ -6,3 +6,7 @@ export interface AuthContextType {
   user: UserType | undefined;
   isLogged: boolean;
 }
+
+export type LoginResponseType = {
+  access_token: string;
+};
