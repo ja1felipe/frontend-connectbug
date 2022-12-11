@@ -3,6 +3,7 @@ import { BugReportService } from '@/bug-report/services/bug-report.service';
 import { BugReportType, statusTranslated } from '@/bug-report/types';
 import Modal from '@/components/Modal';
 import withAuth from '@/hooks/withAuth';
+import BugReportModal from '@/pages/home/_components/BugReportModal';
 import { isoDateToDMY } from '@/utils/date';
 import { Icon } from '@iconify/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,12 +14,18 @@ const bugReportService = new BugReportService();
 
 const Home: React.FC = () => {
   const [bugReports, setBugReports] = useState<BugReportType[]>([]);
+  const [selectedBugReport, setSelectedBugReport] = useState<BugReportType>();
 
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
 
   const onCloseModal = useCallback(() => {
     setOpenModal(false);
   }, []);
+
+  const handleSelectedBugReport = (bugReport: BugReportType) => {
+    setSelectedBugReport(bugReport);
+    setOpenModal(true);
+  };
 
   useEffect(() => {
     bugReportService
@@ -35,21 +42,25 @@ const Home: React.FC = () => {
   if (!isLogged) return null;
   return (
     <Container>
-      <Modal isOpen={openModal} onClose={onCloseModal}>
-        opa
-      </Modal>
+      {selectedBugReport && (
+        <Modal isOpen={openModal} onClose={onCloseModal}>
+          <BugReportModal bugreport={selectedBugReport} />
+        </Modal>
+      )}
       <h1>Bugs Reportados</h1>
       <div>
         <Table>
           <thead className='table-head'>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>Status</th>
-            <th>Nº Passos</th>
-            <th>Screenshots</th>
-            <th>Anotações</th>
-            <th>Criado em</th>
-            <th>Ações</th>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Nº Passos</th>
+              <th>Screenshots</th>
+              <th>Anotações</th>
+              <th>Criado em</th>
+              <th>Ações</th>
+            </tr>
           </thead>
 
           <tbody>
@@ -108,6 +119,7 @@ const Home: React.FC = () => {
                       }}
                     >
                       <IconBtn
+                        onClick={() => handleSelectedBugReport(br)}
                         color='#2274A5'
                         icon='ic:outline-remove-red-eye'
                       />

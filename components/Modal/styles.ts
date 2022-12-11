@@ -5,9 +5,8 @@ export const Outside = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.7);
   width: 100vw;
-  opacity: 0.7;
   position: absolute;
   top: 0;
   left: 0;
@@ -16,5 +15,6 @@ export const Outside = styled.div`
 export const Container = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  max-width: 60%;
+  max-height: calc(100% - 40px);
 `;

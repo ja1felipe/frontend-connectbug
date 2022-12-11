@@ -1,3 +1,5 @@
+import { UserType } from '@/user/types';
+
 export enum StatusEnum {
   PENDING = 'PENDING',
   ACCEPT = 'ACCEPT',
@@ -54,10 +56,12 @@ export interface BugReportType {
     notification_active: true;
     notification_title: string;
     notification_text: string;
-    created_at: {};
-    updated_at: {};
+    created_at: string;
+    updated_at: string;
   };
   created_by_id: string;
+  created_by: Pick<UserType, 'id' | 'email' | 'name'>;
+  assigned_to?: Pick<UserType, 'id' | 'email' | 'name'>;
   assigned_to_id?: string;
   external_id?: string;
   reward_id?: string;
