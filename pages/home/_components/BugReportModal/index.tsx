@@ -1,22 +1,45 @@
+import { NotesService } from '@/bug-report/services/note.service';
 import {
   BugReportType,
   StatusEnum,
   statusTranslated,
-} from '@/bug-report/types';
+} from '@/bug-report/types/bug-report.types';
+import { NoteType } from '@/bug-report/types/note.types';
 import Collapse from '@/components/Collapse';
 import { isoDateToDMY } from '@/utils/date';
 import Image from 'next/image';
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Container, MainInfoContainer, SideInfoContainer } from './styles';
 
 interface IBugReportModal {
   bugreport: BugReportType;
+  onBugReportChange: (bugReport: BugReportType) => void;
 }
 
-const BugReportModal = ({ bugreport }: IBugReportModal) => {
+const notesService = new NotesService();
+
+const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
+  const [newNote, setNewNote] = useState('');
+  const [bugReportLocal, setBugReportLocal] = useState(bugreport);
+
+  const handleCreateNote = () => {
+    notesService
+      .create({
+        bug_report_id: bugreport.id,
+        note: newNote,
+      })
+      .then((res) => {
+        const notes = [...bugreport.notes, res.data];
+        const bug_att = { ...bugreport, notes };
+        setBugReportLocal(bug_att);
+        onBugReportChange(bug_att);
+        setNewNote('');
+      });
+  };
+
   const BtnActions = useCallback(() => {
-    if (bugreport.status === StatusEnum.PENDING) {
+    if (bugReportLocal.status === StatusEnum.PENDING) {
       return (
         <>
           <button style={{ backgroundColor: '#9BC53D' }}>ACEITAR</button>
@@ -25,7 +48,7 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
       );
     }
 
-    if (bugreport.status === StatusEnum.ACCEPT) {
+    if (bugReportLocal.status === StatusEnum.ACCEPT) {
       return (
         <>
           <button style={{ backgroundColor: '#9BC53D' }}>CONCLUIR</button>
@@ -33,7 +56,7 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
       );
     }
 
-    if (bugreport.status === StatusEnum.DENIED) {
+    if (bugReportLocal.status === StatusEnum.DENIED) {
       return (
         <>
           <button style={{ backgroundColor: '#9BC53D' }}>ACEITAR</button>
@@ -41,7 +64,7 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
       );
     }
 
-    if (bugreport.status === StatusEnum.CLOSED) {
+    if (bugReportLocal.status === StatusEnum.CLOSED) {
       return (
         <>
           <button style={{ backgroundColor: '#9BC53D' }}>REABRIR</button>
@@ -50,15 +73,15 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
     }
 
     return <div />;
-  }, [bugreport]);
+  }, [bugReportLocal]);
 
   return (
     <Container>
       <MainInfoContainer>
         <div className='description'>
-          <h2>{bugreport.title}</h2>
+          <h2>{bugReportLocal.title}</h2>
           <p>
-            {bugreport.description}Lorem ipsum dolor sit amet, consectetur
+            {bugReportLocal.description}Lorem ipsum dolor sit amet, consectetur
             adipiscing elit. Nunc lectus urna, tristique at fermentum ut,
             vestibulum at mi. Suspendisse potenti. In euismod, urna vitae
             porttitor congue, ipsum augue accumsan nisl, venenatis efficitur leo
@@ -80,20 +103,22 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
         >
           <div>
             <ol>
-              {bugreport.steps.map((step, i) => (
-                <li key={i}>{step.description}</li>
+              {bugReportLocal.steps.map((step) => (
+                <li key={step.id}>{step.description}</li>
               ))}
             </ol>
           </div>
         </Collapse>
 
-        <div className='screenshots'>
-          <span>Screenshots</span>
-          <div>
-            {bugreport.screenshots.map((ss, i) => {
+        <Collapse
+          style={{ color: '#2274a5', fontSize: 20, fontWeight: 'bold' }}
+          label='Screenshots'
+        >
+          <div className='screenshots'>
+            {bugReportLocal.screenshots.map((ss) => {
               return (
                 <Image
-                  key={i}
+                  key={ss.id}
                   width={140}
                   alt={ss.url}
                   height={100}
@@ -102,39 +127,49 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
               );
             })}
           </div>
-        </div>
+        </Collapse>
 
-        <div className='notes'>
-          <span>Anotações</span>
-          <div>
-            {bugreport.notes.map((note, i) => {
-              return <p key={i}>{note.note}</p>;
+        <Collapse
+          style={{ color: '#2274a5', fontSize: 20, fontWeight: 'bold' }}
+          label='Anotações'
+        >
+          <div className='notes'>
+            {bugReportLocal.notes.map((note, i) => {
+              return (
+                <div key={note.id} className='note'>
+                  <span>{note.created_by.name}</span>
+                  <p>{note.note}</p>
+                </div>
+              );
             })}
 
-            <textarea />
-            <button>Adicionar anotação</button>
+            <textarea
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+            />
+            <button onClick={handleCreateNote}>Adicionar anotação</button>
           </div>
-        </div>
+        </Collapse>
       </MainInfoContainer>
       <SideInfoContainer>
         <div className='status'>
           <span>status</span>
-          <p>{statusTranslated[bugreport.status]}</p>
+          <p>{statusTranslated[bugReportLocal.status]}</p>
         </div>
 
         <div className='created_by'>
           <span>criado por</span>
-          <p>{bugreport.created_by.name}</p>
+          <p>{bugReportLocal.created_by.name}</p>
         </div>
 
         <div className='created_at'>
           <span>criado em</span>
-          <p>{isoDateToDMY(bugreport.created_at)}</p>
+          <p>{isoDateToDMY(bugReportLocal.created_at)}</p>
         </div>
 
         <div className='assigned_to'>
           <span>atribuido a</span>
-          <p>{bugreport.assigned_to?.name || '-'}</p>
+          <p>{bugReportLocal.assigned_to?.name || '-'}</p>
         </div>
 
         <div className='actions'>{<BtnActions />}</div>
@@ -143,4 +178,4 @@ const BugReportModal = ({ bugreport }: IBugReportModal) => {
   );
 };
 
-export default BugReportModal;
+export default React.memo(BugReportModal);

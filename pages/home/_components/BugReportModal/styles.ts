@@ -18,6 +18,7 @@ export const MainInfoContainer = styled.div`
   padding-right: 20px;
   gap: 20px;
   border-right: 2px solid #d9d9d9;
+  height: fit-content;
   .description {
     h2 {
       margin: 0;
@@ -27,49 +28,48 @@ export const MainInfoContainer = styled.div`
     }
   }
 
-  details {
-    border-bottom: 2px solid #d9d9d9;
-    padding: 5px 0;
-
-    summary {
-      color: #2274a5;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    summary:hover {
-      cursor: pointer;
-    }
-  }
-
   .screenshots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-top: 5px;
+    gap: 20px;
+    padding: 20px;
+    background-color: #d9d9d9;
+    overflow-y: auto;
+
     span {
-      color: #2274a5;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    div {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      margin-top: 5px;
-      gap: 20px;
-      padding: 20px;
-      background-color: #d9d9d9;
-      overflow-y: auto;
-
-      span {
-        flex-shrink: 0;
-      }
+      flex-shrink: 0;
     }
   }
 
   .notes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
     span {
       color: #2274a5;
       font-size: 20px;
       font-weight: bold;
+    }
+
+    .note {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 5px;
+
+      span {
+        color: #6a6b83;
+        font-size: 14px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+
+        color: #6a6b83;
+      }
     }
 
     textarea {
@@ -82,8 +82,8 @@ export const MainInfoContainer = styled.div`
     }
 
     button {
-      float: right;
-      margin: 0;
+      width: fit-content;
+      margin-left: auto;
     }
   }
 `;

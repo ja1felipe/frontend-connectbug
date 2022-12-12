@@ -1,3 +1,4 @@
+import { NoteType } from '@/bug-report/types/note.types';
 import { UserType } from '@/user/types';
 
 export enum StatusEnum {
@@ -36,19 +37,17 @@ export interface BugReportType {
   description: string;
   steps: [
     {
+      id: string;
       description: string;
     }
   ];
   screenshots: [
     {
+      id: string;
       url: string;
     }
   ];
-  notes: [
-    {
-      note: string;
-    }
-  ];
+  notes: NoteType[];
   reward?: {
     id: string;
     name: string;

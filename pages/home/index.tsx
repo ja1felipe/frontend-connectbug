@@ -1,11 +1,16 @@
 import { useAuth } from '@/auth/contexts/auth.context';
 import { BugReportService } from '@/bug-report/services/bug-report.service';
-import { BugReportType, statusTranslated } from '@/bug-report/types';
+import {
+  BugReportType,
+  statusTranslated,
+} from '@/bug-report/types/bug-report.types';
 import Modal from '@/components/Modal';
 import withAuth from '@/hooks/withAuth';
 import BugReportModal from '@/pages/home/_components/BugReportModal';
 import { isoDateToDMY } from '@/utils/date';
 import { Icon } from '@iconify/react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Container, IconBtn, Table } from './styles';
@@ -18,13 +23,21 @@ const Home: React.FC = () => {
 
   const [openModal, setOpenModal] = useState(false);
 
+  const router = useRouter();
+
   const onCloseModal = useCallback(() => {
     setOpenModal(false);
-  }, []);
+    router.replace('/home');
+  }, [router]);
 
-  const handleSelectedBugReport = (bugReport: BugReportType) => {
-    setSelectedBugReport(bugReport);
-    setOpenModal(true);
+  const onChangeBugReport = (bugReport: BugReportType) => {
+    const newArray = [...bugReports];
+
+    const bugreportIndex = bugReports.findIndex((br) => br.id === bugReport.id);
+
+    newArray[bugreportIndex] = bugReport;
+
+    setBugReports(newArray);
   };
 
   useEffect(() => {
@@ -38,13 +51,27 @@ const Home: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    const id = router.asPath.split('#')[1];
+    if (!id || bugReports.length === 0) return;
+    const bugreport = bugReports.find((br) => br.id === id);
+
+    if (!bugreport) return;
+
+    setSelectedBugReport(bugreport);
+    setOpenModal(true);
+  }, [bugReports, router.asPath]);
+
   const { isLogged } = useAuth();
   if (!isLogged) return null;
   return (
     <Container>
       {selectedBugReport && (
         <Modal isOpen={openModal} onClose={onCloseModal}>
-          <BugReportModal bugreport={selectedBugReport} />
+          <BugReportModal
+            onBugReportChange={onChangeBugReport}
+            bugreport={selectedBugReport}
+          />
         </Modal>
       )}
       <h1>Bugs Reportados</h1>
@@ -111,7 +138,8 @@ const Home: React.FC = () => {
                   </td>
                   <td>{isoDateToDMY(br.created_at)}</td>
                   <td>
-                    <div
+                    <Link
+                      href={`#${br.id}`}
                       style={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -119,11 +147,10 @@ const Home: React.FC = () => {
                       }}
                     >
                       <IconBtn
-                        onClick={() => handleSelectedBugReport(br)}
                         color='#2274A5'
                         icon='ic:outline-remove-red-eye'
                       />
-                    </div>
+                    </Link>
                   </td>
                 </tr>
               ))}

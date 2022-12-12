@@ -1,4 +1,7 @@
-import { BugReportCreateRequestType, BugReportType } from '@/bug-report/types';
+import {
+  BugReportCreateRequestType,
+  BugReportType,
+} from '@/bug-report/types/bug-report.types';
 import BaseRequestService from '@/shared/services/base.service';
 import { AxiosResponse } from 'axios';
 

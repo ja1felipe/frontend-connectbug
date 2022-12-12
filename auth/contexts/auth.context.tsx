@@ -73,8 +73,6 @@ export const AuthContextProvider = ({
     localStorage.removeItem('token');
   };
 
-  console.log('context');
-
   return (
     <AuthContext.Provider value={{ isLogged: !!user, user, login, logout }}>
       {loading ? null : children}
