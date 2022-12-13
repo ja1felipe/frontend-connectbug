@@ -25,10 +25,14 @@ const Home: React.FC = () => {
 
   const router = useRouter();
 
-  const onCloseModal = useCallback(() => {
-    setOpenModal(false);
-    router.replace('/home');
-  }, [router]);
+  const onCloseModal = useCallback(
+    (e: Event) => {
+      console.log(e);
+      setOpenModal(false);
+      router.replace('/home');
+    },
+    [router]
+  );
 
   const onChangeBugReport = (bugReport: BugReportType) => {
     const newArray = [...bugReports];

@@ -1,20 +1,21 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { CSSProperties, ReactNode, useEffect, useRef } from 'react';
 
 import { Outside, Container } from './styles';
 
 interface IModal {
   children: ReactNode;
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (e: Event) => void;
+  style?: CSSProperties;
 }
 
-const Modal = ({ children, isOpen, onClose }: IModal) => {
+const Modal = ({ children, isOpen, onClose, style }: IModal) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: Event): void {
       if (ref.current && !ref.current.contains(event.target as Node)) {
-        onClose();
+        onClose(event);
       }
     }
     // Bind the event listener
@@ -27,7 +28,7 @@ const Modal = ({ children, isOpen, onClose }: IModal) => {
 
   if (!isOpen) return null;
   return (
-    <Outside>
+    <Outside style={style}>
       <Container ref={ref}>{children}</Container>
     </Outside>
   );

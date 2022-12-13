@@ -31,6 +31,11 @@ export type BugReportCreateRequestType = {
   external_id?: string;
 };
 
+export type BugReportUpdateRequestType = {
+  status?: StatusEnum;
+  assigned_to_id?: string;
+};
+
 export interface BugReportType {
   id: string;
   title: string;

@@ -1,15 +1,17 @@
+import { BugReportService } from '@/bug-report/services/bug-report.service';
 import { NotesService } from '@/bug-report/services/note.service';
 import {
   BugReportType,
   StatusEnum,
   statusTranslated,
 } from '@/bug-report/types/bug-report.types';
-import { NoteType } from '@/bug-report/types/note.types';
 import Collapse from '@/components/Collapse';
+import Modal from '@/components/Modal';
+import AcceptPopup from '@/pages/home/_components/AcceptPopup';
 import { isoDateToDMY } from '@/utils/date';
 import Image from 'next/image';
 import React, { useCallback, useState } from 'react';
-
+import Swal from 'sweetalert2';
 import { Container, MainInfoContainer, SideInfoContainer } from './styles';
 
 interface IBugReportModal {
@@ -18,10 +20,16 @@ interface IBugReportModal {
 }
 
 const notesService = new NotesService();
+const bugReportService = new BugReportService();
 
 const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
   const [newNote, setNewNote] = useState('');
   const [bugReportLocal, setBugReportLocal] = useState(bugreport);
+  const [openModal, setOpenModal] = useState(false);
+
+  const onCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, []);
 
   const handleCreateNote = () => {
     notesService
@@ -32,18 +40,56 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
       .then((res) => {
         const notes = [...bugreport.notes, res.data];
         const bug_att = { ...bugreport, notes };
-        setBugReportLocal(bug_att);
-        onBugReportChange(bug_att);
+        onBugReportChangeLocal(bug_att);
         setNewNote('');
       });
   };
+
+  const onBugReportChangeLocal = useCallback(
+    (bugReport: BugReportType) => {
+      setBugReportLocal({ ...bugReport });
+      onBugReportChange({ ...bugReport });
+    },
+    [onBugReportChange]
+  );
+
+  const handleReject = useCallback(() => {
+    Swal.fire({
+      title: 'Você tem certeza?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '##9BC53D',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar',
+      target: '#bugreport-modal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        bugReportService
+          .update(bugReportLocal.id, {
+            status: StatusEnum.DENIED,
+          })!
+          .then(() => {
+            const newBugReport = { ...bugReportLocal };
+            newBugReport.status = StatusEnum.DENIED;
+            onBugReportChangeLocal(newBugReport);
+          });
+      }
+    });
+  }, [bugReportLocal, onBugReportChangeLocal]);
 
   const BtnActions = useCallback(() => {
     if (bugReportLocal.status === StatusEnum.PENDING) {
       return (
         <>
-          <button style={{ backgroundColor: '#9BC53D' }}>ACEITAR</button>
-          <button style={{ backgroundColor: '#c3423f' }}>REJEITAR</button>
+          <button
+            onClick={() => setOpenModal(true)}
+            style={{ backgroundColor: '#9BC53D' }}
+          >
+            ACEITAR
+          </button>
+          <button onClick={handleReject} style={{ backgroundColor: '#c3423f' }}>
+            REJEITAR
+          </button>
         </>
       );
     }
@@ -59,7 +105,12 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
     if (bugReportLocal.status === StatusEnum.DENIED) {
       return (
         <>
-          <button style={{ backgroundColor: '#9BC53D' }}>ACEITAR</button>
+          <button
+            onClick={() => setOpenModal(true)}
+            style={{ backgroundColor: '#9BC53D' }}
+          >
+            ACEITAR
+          </button>
         </>
       );
     }
@@ -67,16 +118,32 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
     if (bugReportLocal.status === StatusEnum.CLOSED) {
       return (
         <>
-          <button style={{ backgroundColor: '#9BC53D' }}>REABRIR</button>
+          <button
+            onClick={() => setOpenModal(true)}
+            style={{ backgroundColor: '#9BC53D' }}
+          >
+            REABRIR
+          </button>
         </>
       );
     }
 
     return <div />;
-  }, [bugReportLocal]);
+  }, [bugReportLocal.status, handleReject]);
 
   return (
-    <Container>
+    <Container id='bugreport-modal'>
+      <Modal
+        style={{ backgroundColor: 'transparent' }}
+        onClose={onCloseModal}
+        isOpen={openModal}
+      >
+        <AcceptPopup
+          onBugReportChange={onBugReportChangeLocal}
+          bugReport={bugReportLocal}
+          onClose={onCloseModal}
+        />
+      </Modal>
       <MainInfoContainer>
         <div className='description'>
           <h2>{bugReportLocal.title}</h2>

@@ -4,6 +4,8 @@ import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import MainLayout from '@/components/Layout';
 import { AuthContextProvider } from '@/auth/contexts/auth.context';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,6 +26,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <>
       <AuthContextProvider>
         {getLayout(<Component {...pageProps} />)}
+        <ToastContainer />
       </AuthContextProvider>
     </>
   );
