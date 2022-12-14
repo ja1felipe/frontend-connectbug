@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  padding: 30px;
   border-radius: 0px;
   overflow: hidden;
-  height: calc(100vh - 62px);
+  height: calc(100vh);
   background: linear-gradient(90deg, #efefef 30%, #6a6b8396 100%);
   filter: drop-shadow(0px 0px 7px rgba(76, 76, 76, 0.8));
 `;

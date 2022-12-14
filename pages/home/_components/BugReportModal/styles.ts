@@ -7,7 +7,7 @@ export const Container = styled.div`
   padding: 20px;
   opacity: 1;
   border-radius: 5px;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 70%;
 `;
 

@@ -7,13 +7,14 @@ import {
 import Modal from '@/components/Modal';
 import withAuth from '@/hooks/withAuth';
 import BugReportModal from '@/pages/home/_components/BugReportModal';
+import { Table } from '@/styles/shared';
 import { isoDateToDMY } from '@/utils/date';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Container, IconBtn, Table } from './styles';
+import { Container, IconBtn } from './styles';
 
 const bugReportService = new BugReportService();
 
@@ -81,7 +82,7 @@ const Home: React.FC = () => {
       <h1>Bugs Reportados</h1>
       <div>
         <Table>
-          <thead className='table-head'>
+          <thead>
             <tr>
               <th>Título</th>
               <th>Descrição</th>
