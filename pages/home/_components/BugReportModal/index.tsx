@@ -6,11 +6,12 @@ import {
   statusTranslated,
 } from '@/bug-report/types/bug-report.types';
 import Collapse from '@/components/Collapse';
-import Modal from '@/components/Modal';
-import AcceptPopup from '@/pages/home/_components/AcceptPopup';
+import { UserService } from '@/user/services/users.service';
+import { UserType } from '@/user/types';
 import { isoDateToDMY } from '@/utils/date';
 import Image from 'next/image';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Container, MainInfoContainer, SideInfoContainer } from './styles';
 
@@ -20,16 +21,13 @@ interface IBugReportModal {
 }
 
 const notesService = new NotesService();
+const userService = new UserService();
 const bugReportService = new BugReportService();
 
 const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
   const [newNote, setNewNote] = useState('');
   const [bugReportLocal, setBugReportLocal] = useState(bugreport);
-  const [openModal, setOpenModal] = useState(false);
-
-  const onCloseModal = useCallback(() => {
-    setOpenModal(false);
-  }, []);
+  const [users, setUsers] = useState<UserType[]>([]);
 
   const handleCreateNote = () => {
     notesService
@@ -58,8 +56,8 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
       title: 'Você tem certeza?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '##9BC53D',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#9BC53D',
+      cancelButtonColor: '#c3423f',
       confirmButtonText: 'Confirmar',
       target: '#bugreport-modal',
     }).then((result) => {
@@ -72,19 +70,96 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
             const newBugReport = { ...bugReportLocal };
             newBugReport.status = StatusEnum.DENIED;
             onBugReportChangeLocal(newBugReport);
+            toast('Bug Report rejeitado!', { type: 'success' });
+          })
+          .catch((error) => {
+            toast(`Erro: ${error.message}`, { type: 'error' });
           });
       }
     });
+  }, [bugReportLocal, onBugReportChangeLocal]);
+
+  const options = useMemo(async () => {
+    const users = (await userService.getAll()).data;
+    setUsers(users);
+    const options: Record<string, string> = {};
+    users.forEach((user) => (options[user.id] = user.name));
+    return options;
+  }, []);
+
+  const handleAccept = useCallback(async () => {
+    const { value: userId } = await Swal.fire({
+      title: 'Atribua o Bug Report a alguém',
+      target: '#bugreport-modal',
+      input: 'select',
+      inputOptions: options,
+      confirmButtonColor: '#9BC53D',
+      cancelButtonColor: '#c3423f',
+      inputPlaceholder: 'Selecione alguém',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          console.log(value);
+          if (value === '') {
+            resolve('Por favor, selecione alguém!');
+          } else {
+            resolve(null);
+          }
+        });
+      },
+    });
+
+    if (userId) {
+      bugReportService
+        .update(bugReportLocal.id, {
+          status: StatusEnum.ACCEPT,
+          assigned_to_id: userId,
+        })!
+        .then(() => {
+          const user = users.find((user) => user.id === userId);
+          const newBugReport = { ...bugReportLocal };
+          newBugReport.status = StatusEnum.ACCEPT;
+          newBugReport.assigned_to_id = userId;
+          newBugReport.assigned_to = user;
+          onBugReportChangeLocal(newBugReport);
+          toast('Bug Report aceito!', { type: 'success' });
+        })
+        .catch((error) => {
+          toast(`Erro: ${error.message}`, { type: 'error' });
+        });
+    }
+  }, [bugReportLocal, onBugReportChangeLocal, options, users]);
+
+  const handleConclud = useCallback(() => {
+    Swal.fire({
+      title: 'Você tem certeza?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#9BC53D',
+      cancelButtonColor: '#c3423f',
+      confirmButtonText: 'Confirmar',
+      target: '#bugreport-modal',
+    })
+      .then((result) => {
+        if (result.isConfirmed) {
+          bugReportService.conclude(bugReportLocal.id)!.then(() => {
+            const newBugReport = { ...bugReportLocal };
+            newBugReport.status = StatusEnum.CLOSED;
+            onBugReportChangeLocal(newBugReport);
+            toast('Bug Report concluído!', { type: 'success' });
+          });
+        }
+      })
+      .catch((error) => {
+        toast(`Erro: ${error.message}`, { type: 'error' });
+      });
   }, [bugReportLocal, onBugReportChangeLocal]);
 
   const BtnActions = useCallback(() => {
     if (bugReportLocal.status === StatusEnum.PENDING) {
       return (
         <>
-          <button
-            onClick={() => setOpenModal(true)}
-            style={{ backgroundColor: '#9BC53D' }}
-          >
+          <button onClick={handleAccept} style={{ backgroundColor: '#9BC53D' }}>
             ACEITAR
           </button>
           <button onClick={handleReject} style={{ backgroundColor: '#c3423f' }}>
@@ -96,54 +171,33 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
 
     if (bugReportLocal.status === StatusEnum.ACCEPT) {
       return (
-        <>
-          <button style={{ backgroundColor: '#9BC53D' }}>CONCLUIR</button>
-        </>
+        <button onClick={handleConclud} style={{ backgroundColor: '#9BC53D' }}>
+          CONCLUIR
+        </button>
       );
     }
 
     if (bugReportLocal.status === StatusEnum.DENIED) {
       return (
-        <>
-          <button
-            onClick={() => setOpenModal(true)}
-            style={{ backgroundColor: '#9BC53D' }}
-          >
-            ACEITAR
-          </button>
-        </>
+        <button onClick={handleAccept} style={{ backgroundColor: '#9BC53D' }}>
+          ACEITAR
+        </button>
       );
     }
 
     if (bugReportLocal.status === StatusEnum.CLOSED) {
       return (
-        <>
-          <button
-            onClick={() => setOpenModal(true)}
-            style={{ backgroundColor: '#9BC53D' }}
-          >
-            REABRIR
-          </button>
-        </>
+        <button onClick={handleAccept} style={{ backgroundColor: '#9BC53D' }}>
+          REABRIR
+        </button>
       );
     }
 
     return <div />;
-  }, [bugReportLocal.status, handleReject]);
+  }, [bugReportLocal.status, handleAccept, handleConclud, handleReject]);
 
   return (
     <Container id='bugreport-modal'>
-      <Modal
-        style={{ backgroundColor: 'transparent' }}
-        onClose={onCloseModal}
-        isOpen={openModal}
-      >
-        <AcceptPopup
-          onBugReportChange={onBugReportChangeLocal}
-          bugReport={bugReportLocal}
-          onClose={onCloseModal}
-        />
-      </Modal>
       <MainInfoContainer>
         <div className='description'>
           <h2>{bugReportLocal.title}</h2>
@@ -204,7 +258,14 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
             {bugReportLocal.notes.map((note, i) => {
               return (
                 <div key={note.id} className='note'>
-                  <span>{note.created_by.name}</span>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <span>{note.created_by.name}</span>
+                    <span style={{ fontWeight: 'normal' }}>
+                      {isoDateToDMY(note.created_at)}
+                    </span>
+                  </div>
                   <p>{note.note}</p>
                 </div>
               );

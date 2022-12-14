@@ -28,6 +28,10 @@ export class BugReportService extends BaseRequestService {
     return this.request().patch<BugReportType>(`bugreport/${id}`, bugReport);
   }
 
+  conclude(id: string): Promise<AxiosResponse<BugReportType>> {
+    return this.request().patch<BugReportType>(`bugreport/conclude/${id}`);
+  }
+
   getAll(): Promise<AxiosResponse<BugReportType[]>> {
     return this.request().get<BugReportType[]>('bugreport');
   }

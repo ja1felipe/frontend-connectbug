@@ -11,4 +11,5 @@ export interface NoteType {
   bug_report_id: string;
   created_by: UserType;
   created_by_id: string;
+  created_at: string;
 }
