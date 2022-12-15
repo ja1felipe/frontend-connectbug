@@ -36,6 +36,10 @@ export type BugReportUpdateRequestType = {
   assigned_to_id?: string;
 };
 
+export type BugReportConcludeRequestType = {
+  reward_id?: string;
+};
+
 export interface BugReportType {
   id: string;
   title: string;

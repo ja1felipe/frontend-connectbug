@@ -1,11 +1,14 @@
 import { BugReportService } from '@/bug-report/services/bug-report.service';
 import { NotesService } from '@/bug-report/services/note.service';
 import {
+  BugReportConcludeRequestType,
   BugReportType,
   StatusEnum,
   statusTranslated,
 } from '@/bug-report/types/bug-report.types';
 import Collapse from '@/components/Collapse';
+import { RewardService } from '@/reward/services/reward.service';
+import { RewardType } from '@/reward/types';
 import { UserService } from '@/user/services/users.service';
 import { UserType } from '@/user/types';
 import { isoDateToDMY } from '@/utils/date';
@@ -22,12 +25,14 @@ interface IBugReportModal {
 
 const notesService = new NotesService();
 const userService = new UserService();
+const rewardService = new RewardService();
 const bugReportService = new BugReportService();
 
 const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
   const [newNote, setNewNote] = useState('');
   const [bugReportLocal, setBugReportLocal] = useState(bugreport);
   const [users, setUsers] = useState<UserType[]>([]);
+  const [rewards, setRewards] = useState<RewardType[]>([]);
 
   const handleCreateNote = () => {
     notesService
@@ -79,7 +84,7 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
     });
   }, [bugReportLocal, onBugReportChangeLocal]);
 
-  const options = useMemo(async () => {
+  const userOptions = useMemo(async () => {
     const users = (await userService.getAll()).data;
     setUsers(users);
     const options: Record<string, string> = {};
@@ -92,14 +97,13 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
       title: 'Atribua o Bug Report a alguém',
       target: '#bugreport-modal',
       input: 'select',
-      inputOptions: options,
+      inputOptions: userOptions,
       confirmButtonColor: '#9BC53D',
       cancelButtonColor: '#c3423f',
       inputPlaceholder: 'Selecione alguém',
       showCancelButton: true,
       inputValidator: (value) => {
         return new Promise((resolve) => {
-          console.log(value);
           if (value === '') {
             resolve('Por favor, selecione alguém!');
           } else {
@@ -128,32 +132,52 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
           toast(`Erro: ${error.message}`, { type: 'error' });
         });
     }
-  }, [bugReportLocal, onBugReportChangeLocal, options, users]);
+  }, [bugReportLocal, onBugReportChangeLocal, userOptions, users]);
 
-  const handleConclud = useCallback(() => {
-    Swal.fire({
-      title: 'Você tem certeza?',
-      icon: 'warning',
+  const rewardOptions = useMemo(async () => {
+    const rewards = (await rewardService.getAll()).data;
+    setRewards(rewards);
+    const options: Record<string, string> = {
+      '': 'Não enviar recompensa',
+    };
+    rewards.forEach((reward) => (options[reward.id] = reward.name));
+    return options;
+  }, []);
+
+  const handleConclud = useCallback(async () => {
+    const { value: rewardId, isConfirmed } = await Swal.fire({
+      title: 'Gostaria de enviar uma recompensa?',
+      text: 'Ao escolher uma recompensa uma request será enviada ao webhook atrelado a recompensa escolhida, no corpo dessa request estarão, o ID do usuário que criou o bug report, o email do usuário e o ID do bug report.',
+      input: 'select',
+      inputOptions: rewardOptions,
       showCancelButton: true,
       confirmButtonColor: '#9BC53D',
       cancelButtonColor: '#c3423f',
       confirmButtonText: 'Confirmar',
       target: '#bugreport-modal',
-    })
-      .then((result) => {
-        if (result.isConfirmed) {
-          bugReportService.conclude(bugReportLocal.id)!.then(() => {
-            const newBugReport = { ...bugReportLocal };
-            newBugReport.status = StatusEnum.CLOSED;
-            onBugReportChangeLocal(newBugReport);
-            toast('Bug Report concluído!', { type: 'success' });
-          });
-        }
+    });
+
+    if (!isConfirmed) return;
+
+    const body: BugReportConcludeRequestType = {};
+    if (rewardId) {
+      body.reward_id = rewardId;
+    }
+
+    console.log(rewardId);
+
+    bugReportService
+      .conclude(bugReportLocal.id, body)!
+      .then(() => {
+        const newBugReport = { ...bugReportLocal };
+        newBugReport.status = StatusEnum.CLOSED;
+        onBugReportChangeLocal(newBugReport);
+        toast('Bug Report concluído!', { type: 'success' });
       })
       .catch((error) => {
         toast(`Erro: ${error.message}`, { type: 'error' });
       });
-  }, [bugReportLocal, onBugReportChangeLocal]);
+  }, [bugReportLocal, onBugReportChangeLocal, rewardOptions]);
 
   const BtnActions = useCallback(() => {
     if (bugReportLocal.status === StatusEnum.PENDING) {

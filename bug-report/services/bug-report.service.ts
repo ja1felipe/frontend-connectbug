@@ -1,4 +1,5 @@
 import {
+  BugReportConcludeRequestType,
   BugReportCreateRequestType,
   BugReportType,
   BugReportUpdateRequestType,
@@ -28,8 +29,14 @@ export class BugReportService extends BaseRequestService {
     return this.request().patch<BugReportType>(`bugreport/${id}`, bugReport);
   }
 
-  conclude(id: string): Promise<AxiosResponse<BugReportType>> {
-    return this.request().patch<BugReportType>(`bugreport/conclude/${id}`);
+  conclude(
+    id: string,
+    bugReport: BugReportConcludeRequestType
+  ): Promise<AxiosResponse<BugReportType>> {
+    return this.request().patch<BugReportType>(
+      `bugreport/conclude/${id}`,
+      bugReport
+    );
   }
 
   getAll(): Promise<AxiosResponse<BugReportType[]>> {
