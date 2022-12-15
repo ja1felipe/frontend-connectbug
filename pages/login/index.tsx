@@ -1,6 +1,7 @@
 import { useAuth } from '@/auth/contexts/auth.context';
 import Spinner from '@/components/Spinner';
 import { NextPageWithLayout } from '@/pages/_app';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useState } from 'react';
 
@@ -42,6 +43,8 @@ const Login: NextPageWithLayout = () => {
   return (
     <Container>
       <FormContainer onSubmit={handleLogin}>
+        <Image width={195} height={100} src={'/assets/logo-dark.png'} alt='a' />
+
         <InputContainer>
           <Label htmlFor='email'>email</Label>
           <Input
