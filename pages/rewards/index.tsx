@@ -8,8 +8,9 @@ import { isoDateToDMY } from '@/utils/date';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
-import { Container } from './styles';
+import { Button, Container } from './styles';
 
 const rewardService = new RewardService();
 
@@ -30,10 +31,40 @@ const Reward: React.FC = () => {
         toast(error.message, { type: 'error' });
       });
   }, []);
+
+  const handleInfos = () => {
+    Swal.fire({
+      title: 'Recompensas',
+      html: '<p>Recompensas são agrados que você pode dar a um usuário quando um bug que o mesmo reportou for concluido. Mas técnicamente falando tudo que uma recompensa cadastrada no ConnectBug faz é, enviar um request do tipo POST para a URL do webhook que você cadastrar, enviando no <code>body</code> da requisição, o ID e e-mail do usuário que reportou o bug, além do ID do bug report concluído. Além disso, se você desejar, o próprio ConnectBug enviará uma notificação avisando que o usuário ganhou uma recompensa.</p><p>Você pode testar se o webhook está funcionando clicando no ícone de ação verde, você deverá receber uma request POST com o body { "test" : "success"} no seu endpoint.</p>',
+      icon: 'info',
+      confirmButtonColor: '#9BC53D',
+      confirmButtonText: 'Ok',
+      target: '#bugreport-modal',
+    });
+  };
+
+  const handleTest = (id: string) => {
+    rewardService
+      .test(id)
+      .then(() => {
+        toast('Teste enviado com sucesso', { type: 'success' });
+      })
+      .catch((error) => {
+        toast(error.message, { type: 'error' });
+      });
+  };
   return (
     <Container>
       <h1>Recompensas</h1>
-      <div style={{ alignSelf: 'end' }}>
+      <div
+        style={{
+          alignSelf: 'end',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 5,
+        }}
+      >
+        <Button onClick={handleInfos}>O QUE SÃO RECOMPENSAS</Button>
         <CreateReward onCreateReward={onCreateNewReward} />
       </div>
       <Table>
@@ -66,16 +97,34 @@ const Reward: React.FC = () => {
                 </td>
                 <td>{isoDateToDMY(reward.created_at)}</td>
                 <td>
-                  <Link
-                    href={`#${reward.id}`}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignContent: 'center',
-                    }}
+                  <div
+                    style={{ display: 'flex', alignItems: 'center', gap: 15 }}
                   >
-                    <IconBtn color='#2274A5' icon='ic:outline-remove-red-eye' />
-                  </Link>
+                    <Link
+                      href={`#${reward.id}`}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                      }}
+                    >
+                      <IconBtn
+                        color='#2274A5'
+                        icon='ic:outline-remove-red-eye'
+                      />
+                    </Link>
+                    <div
+                      onClick={() => handleTest(reward.id)}
+                      style={{ height: 15 }}
+                      title='Testar'
+                    >
+                      <IconBtn
+                        width={15}
+                        color='#9BC53D'
+                        icon='pajamas:retry'
+                      />
+                    </div>
+                  </div>
                 </td>
               </tr>
             ))}

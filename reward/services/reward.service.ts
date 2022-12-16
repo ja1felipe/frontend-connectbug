@@ -10,4 +10,8 @@ export class RewardService extends BaseRequestService {
   getAll(): Promise<AxiosResponse<RewardType[]>> {
     return this.request().get<RewardType[]>('rewards');
   }
+
+  test(id: string): Promise<AxiosResponse<any>> {
+    return this.request().get(`rewards/test/${id}`);
+  }
 }

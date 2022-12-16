@@ -164,8 +164,6 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
       body.reward_id = rewardId;
     }
 
-    console.log(rewardId);
-
     bugReportService
       .conclude(bugReportLocal.id, body)!
       .then(() => {
@@ -220,6 +218,17 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
     return <div />;
   }, [bugReportLocal.status, handleAccept, handleConclud, handleReject]);
 
+  const handleImages = useCallback((url: string) => {
+    Swal.fire({
+      target: '#bugreport-modal',
+      imageUrl: url,
+      imageHeight: 400,
+      imageAlt: 'print',
+      confirmButtonText: 'Fechar',
+      confirmButtonColor: '#c3423f',
+    });
+  }, []);
+
   return (
     <Container id='bugreport-modal'>
       <MainInfoContainer>
@@ -263,6 +272,8 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
             {bugReportLocal.screenshots.map((ss) => {
               return (
                 <Image
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleImages(ss.url)}
                   key={ss.id}
                   width={140}
                   alt={ss.url}
