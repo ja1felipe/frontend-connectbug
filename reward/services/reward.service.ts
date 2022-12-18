@@ -14,4 +14,11 @@ export class RewardService extends BaseRequestService {
   test(id: string): Promise<AxiosResponse<any>> {
     return this.request().get(`rewards/test/${id}`);
   }
+
+  update(
+    id: string,
+    reward: Partial<RewardType>
+  ): Promise<AxiosResponse<RewardType>> {
+    return this.request().patch(`rewards/${id}`, reward);
+  }
 }

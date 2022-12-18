@@ -108,9 +108,7 @@ const CreateReward = ({ onCreateReward }: ICreateReward) => {
                 id='text_notification'
               />
             </InputContainer>
-            <Button type='submit' onClick={() => setOpen(true)}>
-              Criar recompensa
-            </Button>
+            <Button type='submit'>Criar recompensa</Button>
           </FormContainer>
         </Container>
       </Modal>

@@ -1,11 +1,10 @@
 import withAuth from '@/hooks/withAuth';
-import { IconBtn } from '@/pages/home/styles';
 import CreateReward from '@/pages/rewards/_components/CreateReward';
+import InfoModal from '@/pages/rewards/_components/InfoModal';
 import { RewardService } from '@/reward/services/reward.service';
 import { RewardType } from '@/reward/types';
-import { Table } from '@/styles/shared';
+import { IconBtn, Table } from '@/styles/shared';
 import { isoDateToDMY } from '@/utils/date';
-import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -20,6 +19,16 @@ const Reward: React.FC = () => {
   const onCreateNewReward = useCallback((reward: RewardType) => {
     setRewards((prev) => [...prev, reward]);
   }, []);
+
+  const onEditReward = useCallback(
+    (reward: RewardType) => {
+      const index = rewards.findIndex((rw) => rw.id === reward.id);
+      const update = [...rewards];
+      update[index] = { ...reward };
+      setRewards(update);
+    },
+    [rewards]
+  );
 
   useEffect(() => {
     rewardService
@@ -100,19 +109,7 @@ const Reward: React.FC = () => {
                   <div
                     style={{ display: 'flex', alignItems: 'center', gap: 15 }}
                   >
-                    <Link
-                      href={`#${reward.id}`}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignContent: 'center',
-                      }}
-                    >
-                      <IconBtn
-                        color='#2274A5'
-                        icon='ic:outline-remove-red-eye'
-                      />
-                    </Link>
+                    <InfoModal onEditReward={onEditReward} reward={reward} />
                     <div
                       onClick={() => handleTest(reward.id)}
                       style={{ height: 15 }}

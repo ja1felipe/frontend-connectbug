@@ -7,14 +7,14 @@ import {
 import Modal from '@/components/Modal';
 import withAuth from '@/hooks/withAuth';
 import BugReportModal from '@/pages/home/_components/BugReportModal';
-import { Table } from '@/styles/shared';
+import { IconBtn, Table } from '@/styles/shared';
 import { isoDateToDMY } from '@/utils/date';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Container, IconBtn } from './styles';
+import { Container } from './styles';
 
 const bugReportService = new BugReportService();
 

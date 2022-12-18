@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 
 export const Table = styled.table`
@@ -44,5 +45,27 @@ export const Input = styled.input`
 
   &:disabled {
     cursor: not-allowed;
+  }
+`;
+
+export const IconBtn = styled(Icon)`
+  cursor: pointer;
+  font-size: 20px;
+`;
+
+export const Button = styled.button`
+  font-size: 16px;
+  color: white;
+  border: 1px solid lightgray;
+  background-color: #2d91f9;
+  text-transform: uppercase;
+  padding: 10px;
+  align-self: flex-end;
+  border-radius: 3px;
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  &:hover {
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   }
 `;

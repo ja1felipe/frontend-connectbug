@@ -1,12 +1,12 @@
 import { useAuth } from '@/auth/contexts/auth.context';
 import Spinner from '@/components/Spinner';
 import { NextPageWithLayout } from '@/pages/_app';
+import { Button } from '@/styles/shared';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useState } from 'react';
 
 import {
-  Button,
   Container,
   FormContainer,
   Input,

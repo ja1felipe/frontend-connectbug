@@ -1,12 +1,10 @@
-import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px 25px;
-
-  h1 {
-    color: #c3423f;
-  }
+  gap: 15px;
+  padding: 15px;
+  background-color: #d9d9d9;
+  border-radius: 5px;
 `;
