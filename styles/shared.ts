@@ -48,6 +48,36 @@ export const Input = styled.input`
   }
 `;
 
+export const Option = styled.option`
+  padding: 10px;
+  background-color: #d9d9d9;
+  color: #6a6b83;
+  border: 1px solid #6a6b83;
+
+  &:invalid {
+    border: 1px solid #c3423f;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+export const Select = styled.select`
+  padding: 10px;
+  background-color: #d9d9d9;
+  color: #6a6b83;
+  border: 1px solid #6a6b83;
+
+  &:invalid {
+    border: 1px solid #c3423f;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
 export const IconBtn = styled(Icon)`
   cursor: pointer;
   font-size: 20px;

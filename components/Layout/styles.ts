@@ -22,5 +22,5 @@ export const PageContainer = styled.div`
   background-color: white;
   width: 100%;
   padding: 5px;
-  overflow: hidden;
+  overflow: auto;
 `;

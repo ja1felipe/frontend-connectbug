@@ -57,6 +57,7 @@ const InfoModal = ({ reward, onEditReward }: IInfoModal) => {
 
   const handleClose = useCallback(() => {
     router.push('/rewards');
+    setEdit(false);
     setOpen(false);
   }, [router]);
 

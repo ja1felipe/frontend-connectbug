@@ -1,6 +1,6 @@
 import { AuthService } from '@/auth/services/auth.service';
 import { AuthContextType } from '@/auth/types';
-import { UserType } from '@/user/types';
+import { UserJwtType } from '@/user/types';
 import { isAxiosError } from 'axios';
 import jwtDecode from 'jwt-decode';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ export const AuthContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [user, setUser] = useState<UserType>();
+  const [user, setUser] = useState<UserJwtType>();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const AuthContextProvider = ({
       user.id = user.sub;
       delete user.sub;
 
-      setUser(user as UserType);
+      setUser(user as UserJwtType);
     }
     setLoading(false);
   }, []);
@@ -52,7 +52,7 @@ export const AuthContextProvider = ({
           user.id = user.sub;
           delete user.sub;
 
-          setUser(user as UserType);
+          setUser(user as UserJwtType);
           setLoading(false);
           resolve(true);
         })
