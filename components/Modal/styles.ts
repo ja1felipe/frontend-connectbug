@@ -15,6 +15,6 @@ export const Outside = styled.div`
 export const Container = styled.div`
   display: flex;
   justify-content: center;
-  max-width: 60%;
+  width: 60%;
   max-height: calc(100% - 40px);
 `;

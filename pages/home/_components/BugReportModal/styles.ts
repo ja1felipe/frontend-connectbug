@@ -9,6 +9,7 @@ export const Container = styled.div`
   border-radius: 5px;
   overflow-y: auto;
   max-height: 70%;
+  width: 100%;
 `;
 
 export const MainInfoContainer = styled.div`
@@ -19,6 +20,7 @@ export const MainInfoContainer = styled.div`
   gap: 20px;
   border-right: 2px solid #d9d9d9;
   height: fit-content;
+  flex-grow: 2;
   .description {
     h2 {
       margin: 0;
@@ -92,8 +94,8 @@ export const SideInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 20px;
+  flex-grow: 1;
   gap: 10px;
-  width: 100%;
   * {
     margin: 0;
   }

@@ -10,4 +10,11 @@ export class UserService extends BaseRequestService {
   getAll(): Promise<AxiosResponse<UserType[]>> {
     return this.request().get<UserType[]>('users');
   }
+
+  update(
+    id: string,
+    user: Partial<UserType>
+  ): Promise<AxiosResponse<UserType>> {
+    return this.request().patch(`users/${id}`, user);
+  }
 }

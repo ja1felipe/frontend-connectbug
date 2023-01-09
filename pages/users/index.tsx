@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Container } from './styles';
+import InfoModal from '@/pages/users/_components/InfoModal';
 
 const userService = new UserService();
 
@@ -17,6 +18,16 @@ const Users: React.FC = () => {
   const onCreateNewUser = useCallback((user: UserType) => {
     setUsers((prev) => [...prev, user]);
   }, []);
+
+  const onEditUser = useCallback(
+    (newUser: UserType) => {
+      const index = users.findIndex((user) => user.id === newUser.id);
+      const update = [...users];
+      update[index] = { ...newUser };
+      setUsers(update);
+    },
+    [users]
+  );
 
   useEffect(() => {
     userService
@@ -62,11 +73,7 @@ const Users: React.FC = () => {
                 <td title={user.role}>{user.role}</td>
                 <td>{isoDateToDMY(user.created_at)}</td>
                 <td>
-                  <IconBtn
-                    width={20}
-                    color='#2274A5'
-                    icon='ic:outline-remove-red-eye'
-                  />
+                  <InfoModal onEditUser={onEditUser} user={user} />
                 </td>
               </tr>
             ))}

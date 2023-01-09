@@ -234,21 +234,7 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
       <MainInfoContainer>
         <div className='description'>
           <h2>{bugReportLocal.title}</h2>
-          <p>
-            {bugReportLocal.description}Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit. Nunc lectus urna, tristique at fermentum ut,
-            vestibulum at mi. Suspendisse potenti. In euismod, urna vitae
-            porttitor congue, ipsum augue accumsan nisl, venenatis efficitur leo
-            arcu ut quam. Vivamus viverra tempus tellus quis hendrerit.
-            Pellentesque non porttitor dui, ut efficitur lacus. Donec in turpis
-            sit amet metus interdum volutpat sed in elit. Aliquam purus dui,
-            facilisis ac velit semper, tempus lacinia sem. Etiam eget nunc
-            consectetur, placerat orci fringilla, laoreet nunc. Duis sodales
-            posuere arcu, hendrerit pretium nisl vulputate id. Praesent
-            sollicitudin lorem quis lorem sagittis congue. Nullam in congue
-            sapien. Nullam elementum lacus erat, quis lobortis purus vehicula a.
-            Fusce vitae dui sodales, luctus magna a, tristique libero.
-          </p>
+          <p>{bugReportLocal.description}</p>
         </div>
 
         <Collapse
@@ -285,6 +271,25 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
           </div>
         </Collapse>
 
+        {bugReportLocal.deviceInfos ? (
+          <Collapse
+            style={{ color: '#2274a5', fontSize: 20, fontWeight: 'bold' }}
+            label='Informações do aparelho'
+          >
+            <div>
+              <ol>
+                {Object.entries(bugReportLocal.deviceInfos).map(
+                  ([key, value]) => (
+                    <li style={{ listStyle: 'none' }} key={key}>
+                      <strong>{key}</strong>: {value}
+                    </li>
+                  )
+                )}
+              </ol>
+            </div>
+          </Collapse>
+        ) : null}
+
         <Collapse
           style={{ color: '#2274a5', fontSize: 20, fontWeight: 'bold' }}
           label='Anotações'
@@ -318,11 +323,6 @@ const BugReportModal = ({ bugreport, onBugReportChange }: IBugReportModal) => {
         <div className='status'>
           <span>status</span>
           <p>{statusTranslated[bugReportLocal.status]}</p>
-        </div>
-
-        <div className='created_by'>
-          <span>criado por</span>
-          <p>{bugReportLocal.created_by.name}</p>
         </div>
 
         <div className='created_at'>

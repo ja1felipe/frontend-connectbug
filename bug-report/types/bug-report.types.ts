@@ -40,6 +40,10 @@ export type BugReportConcludeRequestType = {
   reward_id?: string;
 };
 
+type DeviceInfos = {
+  [index: string]: any;
+};
+
 export interface BugReportType {
   id: string;
   title: string;
@@ -67,8 +71,8 @@ export interface BugReportType {
     created_at: string;
     updated_at: string;
   };
+  deviceInfos: DeviceInfos | null;
   created_by_id: string;
-  created_by: Pick<UserType, 'id' | 'email' | 'name'>;
   assigned_to?: Pick<UserType, 'id' | 'email' | 'name'>;
   assigned_to_id?: string;
   external_id?: string;
