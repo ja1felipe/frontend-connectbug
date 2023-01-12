@@ -23,4 +23,6 @@ export const PageContainer = styled.div`
   width: 100%;
   padding: 5px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
 `;

@@ -24,25 +24,13 @@ const InfoModal = ({ reward, onEditReward }: IInfoModal) => {
   const [edit, setEdit] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
-  const [notTitle, setNotTitle] = useState('');
-  const [notText, setNotText] = useState('');
 
   useEffect(() => {
-    setChecked(reward.notification_active);
     setName(reward.name);
     setUrl(reward.url);
-    setNotTitle(reward.notification_title);
-    setNotText(reward.notification_text);
-  }, [
-    reward.name,
-    reward.notification_active,
-    reward.notification_text,
-    reward.notification_title,
-    reward.url,
-  ]);
+  }, [reward.name, reward.url]);
 
   const router = useRouter();
 
@@ -66,9 +54,7 @@ const InfoModal = ({ reward, onEditReward }: IInfoModal) => {
     const body = {
       name: name,
       url: url,
-      notification_active: checked,
-      notification_title: notTitle,
-      notification_text: notText,
+      notification_active: false,
     };
 
     rewardService
@@ -118,58 +104,6 @@ const InfoModal = ({ reward, onEditReward }: IInfoModal) => {
               />
             ) : (
               <span>{localReward.url}</span>
-            )}
-          </InputContainer>
-          <InputContainer>
-            <label>Notificação:</label>
-            <span>
-              {edit ? (
-                <>
-                  <Input
-                    onClick={() => setChecked((prev) => !prev)}
-                    checked={checked}
-                    type='radio'
-                    id='active_notification'
-                  />
-                  <label htmlFor='active_notification'>
-                    {checked ? 'Ativa' : 'Desativada'}
-                  </label>
-                </>
-              ) : localReward.notification_active ? (
-                'Ativa'
-              ) : (
-                'Desativada'
-              )}
-            </span>
-          </InputContainer>
-          <InputContainer>
-            <label>Título da notificação</label>
-            {edit ? (
-              <Input
-                required={checked}
-                value={notTitle}
-                onChange={(e) => setNotTitle(e.target.value)}
-                disabled={!checked}
-                placeholder='Titulo da notificação'
-                id='title_notification'
-              />
-            ) : (
-              <span>{localReward.notification_title || '-'}</span>
-            )}
-          </InputContainer>
-          <InputContainer>
-            <label>Texto da notificação</label>
-            {edit ? (
-              <Input
-                value={notText}
-                required={checked}
-                onChange={(e) => setNotText(e.target.value)}
-                disabled={!checked}
-                placeholder='Texto da notificação'
-                id='text_notification'
-              />
-            ) : (
-              <span>{localReward.notification_text || '-'}</span>
             )}
           </InputContainer>
           {edit ? (

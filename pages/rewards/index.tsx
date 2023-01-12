@@ -44,7 +44,7 @@ const Reward: React.FC = () => {
   const handleInfos = () => {
     Swal.fire({
       title: 'Recompensas',
-      html: '<p>Recompensas são agrados que você pode dar a um usuário quando um bug que o mesmo reportou for concluido. Mas técnicamente falando tudo que uma recompensa cadastrada no ConnectBug faz é, enviar um request do tipo POST para a URL do webhook que você cadastrar, enviando no <code>body</code> da requisição, o ID e e-mail do usuário que reportou o bug, além do ID do bug report concluído. Além disso, se você desejar, o próprio ConnectBug enviará uma notificação avisando que o usuário ganhou uma recompensa.</p><p>Você pode testar se o webhook está funcionando clicando no ícone de ação verde, você deverá receber uma request POST com o body { "test" : "success"} no seu endpoint.</p>',
+      html: '<p>Recompensas são agrados que você pode dar a um usuário quando um bug que o mesmo reportou for concluido. Mas técnicamente falando tudo que uma recompensa cadastrada no ConnectBug faz é, enviar um request do tipo POST para a URL do webhook que você cadastrar, enviando no <code>body</code> da requisição, o ID e e-mail do usuário que reportou o bug, além do ID do bug report concluído.</p><p>Você pode testar se o webhook está funcionando clicando no ícone de ação verde, você deverá receber uma request POST com o body { "test" : "success"} no seu endpoint.</p>',
       icon: 'info',
       confirmButtonColor: '#9BC53D',
       confirmButtonText: 'Ok',
@@ -79,11 +79,9 @@ const Reward: React.FC = () => {
       <Table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Nome</th>
             <th>URL</th>
-            <th>Status Notificação</th>
-            <th>Titulo Notificação</th>
-            <th>Texto Notificação</th>
             <th>Criado em</th>
             <th>Ações</th>
           </tr>
@@ -93,17 +91,9 @@ const Reward: React.FC = () => {
           {rewards &&
             rewards.map((reward) => (
               <tr key={reward.id}>
+                <td title={reward.id}>{reward.id}</td>
                 <td title={reward.name}>{reward.name}</td>
                 <td title={reward.url}>{reward.url}</td>
-                <td title={reward.notification_active ? 'Ativo' : 'Desativado'}>
-                  {reward.notification_active ? 'Ativo' : 'Desativado'}
-                </td>
-                <td title={reward.notification_title}>
-                  {reward.notification_title || '-'}
-                </td>
-                <td title={reward.notification_text}>
-                  {reward.notification_text || '-'}
-                </td>
                 <td>{isoDateToDMY(reward.created_at)}</td>
                 <td>
                   <div

@@ -9,7 +9,7 @@ export const Container = styled.div`
   border-radius: 5px;
   overflow-y: auto;
   max-height: 70%;
-  width: 100%;
+  width: 720px;
 `;
 
 export const MainInfoContainer = styled.div`

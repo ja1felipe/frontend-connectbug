@@ -15,11 +15,8 @@ interface ICreateReward {
 
 const CreateReward = ({ onCreateReward }: ICreateReward) => {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
-  const [notTitle, setNotTitle] = useState('');
-  const [notText, setNotText] = useState('');
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -30,9 +27,7 @@ const CreateReward = ({ onCreateReward }: ICreateReward) => {
     const body: RewardRequestType = {
       name,
       url,
-      notification_active: checked,
-      notification_title: notTitle,
-      notification_text: notText,
+      notification_active: false,
     };
     rewardService
       .create(body)
@@ -69,43 +64,6 @@ const CreateReward = ({ onCreateReward }: ICreateReward) => {
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder='Url do webhook'
                 id='url'
-              />
-            </InputContainer>
-            <InputContainer
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}
-            >
-              <Input
-                onClick={() => setChecked((prev) => !prev)}
-                checked={checked}
-                type='radio'
-                id='active_notification'
-              />
-              <label htmlFor='active_notification'>Enviar notificação</label>
-            </InputContainer>
-            <InputContainer>
-              <label htmlFor='title_notification'>Titulo da notificação</label>
-              <Input
-                required={checked}
-                value={notTitle}
-                onChange={(e) => setNotTitle(e.target.value)}
-                disabled={!checked}
-                placeholder='Titulo da notificação'
-                id='title_notification'
-              />
-            </InputContainer>
-            <InputContainer>
-              <label htmlFor='text_notification'>Texto da notificação</label>
-              <Input
-                value={notText}
-                required={checked}
-                onChange={(e) => setNotText(e.target.value)}
-                disabled={!checked}
-                placeholder='Texto da notificação'
-                id='text_notification'
               />
             </InputContainer>
             <Button type='submit'>Criar recompensa</Button>

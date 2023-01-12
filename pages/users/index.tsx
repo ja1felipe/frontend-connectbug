@@ -1,14 +1,13 @@
 import CreateUser from './_components/CreateUser';
-import { IconBtn, Table } from '@/styles/shared';
+import { Table } from '@/styles/shared';
 import { UserService } from '@/user/services/users.service';
 import { UserType } from '@/user/types';
 import { isoDateToDMY } from '@/utils/date';
-import { Icon } from '@iconify/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Container } from './styles';
-import InfoModal from '@/pages/users/_components/InfoModal';
+import InfoModal from './_components/InfoModal';
 
 const userService = new UserService();
 
