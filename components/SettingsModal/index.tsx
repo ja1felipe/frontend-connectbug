@@ -62,6 +62,7 @@ const SettingsModal = ({ isOpen, onClose }: ISettingsModal) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Container>
+        <h3 style={{ margin: 5, color: '#c3423f' }}>Dados pessoais</h3>
         <InputContainer>
           <label>Nome</label>
           {edit ? (
@@ -94,7 +95,7 @@ const SettingsModal = ({ isOpen, onClose }: ISettingsModal) => {
         </InputContainer>
 
         <InputContainer>
-          <label>Senha</label>
+          <label>Nova senha</label>
           {edit ? (
             <>
               <Input
@@ -104,7 +105,7 @@ const SettingsModal = ({ isOpen, onClose }: ISettingsModal) => {
                 onChange={(event) => setPassword(event.target.value)}
                 onBlur={validate}
               />
-              <br />
+              <label>Confirme a senha</label>
               <Input
                 type='password'
                 value={confirmPassword}
